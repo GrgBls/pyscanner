@@ -8,13 +8,8 @@ def searchItem(barcode):
     results = db.search(Item.code == barcode)
     if results:
         return(results)
- 
     else:
-        results = db.search(Item.name == x)
-        if results: 
-            return(results)
-        else:
-            return 0
+        return 0
  
 def updatePrice(barcode, newPrice):
      results = db.search(Item.code == barcode)
