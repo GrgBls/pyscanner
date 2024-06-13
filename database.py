@@ -3,13 +3,21 @@ from tinydb import TinyDB, Query
 db = TinyDB('data.json')
  
 Item = Query()
-
+ 
+flag = 1
+ 
+ 
 def searchItem(barcode):
     results = db.search(Item.code == barcode)
     if results:
         return(results)
+ 
     else:
-        return 0
+        results = db.search(Item.name == barcode)
+        if results: 
+            return(results)
+        else:
+            return 0
  
 def updatePrice(barcode, newPrice):
      results = db.search(Item.code == barcode)
@@ -68,4 +76,4 @@ def updateStock(barcode, additionalStock):
         return 0
     else:
         return 1
- 
+
