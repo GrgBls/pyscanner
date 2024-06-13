@@ -3,10 +3,7 @@ from tinydb import TinyDB, Query
 db = TinyDB('data.json')
  
 Item = Query()
- 
-flag = 1
- 
- 
+
 def searchItem(barcode):
     results = db.search(Item.code == barcode)
     if results:
