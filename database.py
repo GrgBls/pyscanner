@@ -77,14 +77,3 @@ def updateStock(barcode, additionalStock):
     else:
         return 1
  
- 
- 
-insertItem("060639121670", "Mango Loco Monster", "1.5", "5")
-print(searchItem("060639121670"))
-print(getItemPrice("060639121670"))
-print(getItemName("060639121670"))
-itemSold("060639121670")
-print(searchItem("060639121670"))
-updateStock("060639121670", "10")
-print(searchItem("060639121670"))
-
