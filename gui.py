@@ -33,7 +33,8 @@ def getManualBarcode():
      
      item_name = database.getItemName(Barcode)
      item_price = database.getItemPrice(Barcode)
-     if item_name != 0:
+     item_stock = database.searchItem(Barcode)[0]['stock']
+     if item_name != 0 and int(item_stock) > 0:
 
           database.itemSold(Barcode)
           
@@ -276,7 +277,7 @@ def clicksubmitbtn3(dbWindow, dbWindow4, barcode, stock):
                searchResults.pack()
 
      else:
-
+          database.updateStock(barcode, stock)
           if searchResults is not None:
                searchResults.config(text="Stock has been updated successfully.")
           else:
