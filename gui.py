@@ -3,6 +3,8 @@ import database
 item_price_list =[]
 item_name_list = []
 item_price_total=0.0
+key=0
+depth = 100
 
  
 root = Tk()
@@ -22,6 +24,9 @@ enterBarcode.place(x=15, y=120, height=25)
 searchResults = None
 
 def getManualBarcode():
+     global depth
+     global key
+     global item_price_total
      ManualBarcode = enterBarcode.get()
      Barcode = ManualBarcode
 
@@ -33,9 +38,28 @@ def getManualBarcode():
           item_price_list.append(item_price)
           item_name_list.append(item_name)
           database.itemSold(Barcode)
+          
 
-          print(item_name_list)
-          print(item_price_list)
+          name=database.searchItem(Barcode)[0]['name']
+          price=database.searchItem(Barcode)[0]['price']
+          
+
+          
+          print(item_price_total)
+
+          receipt_name=Label(text = name)
+          receipt_name.config(font=('TkDefaultFont',18))
+          receipt_name.place(x=650,y=depth)
+
+          receipt_price=Label(text = price)
+          receipt_price.config(font=('TkDefaultFont',18))
+          receipt_price.place(x=920,y=depth)
+
+          key = key +1 
+          depth = depth+40
+
+
+          
      enterBarcode.delete(0,END)
 enterbtn = Button(text="Enter", width=10, fg="black", bg="gray85",
                   command= getManualBarcode)
