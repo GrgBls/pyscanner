@@ -59,10 +59,10 @@ def clickdbbtn():
 
      scanText2 = Label(dbWindow, text="Enter product's barcode: ")
      scanText2.config(font=('TkDefaultFont', 20))
-     #scanText2.place(x=350, y=250)
+    
      scanText2.pack()
      enterBarcode2 = Entry(dbWindow, fg="black", bg="gray85", width=40)
-     #enterBarcode2.place(x=350, y=290)
+    
      enterBarcode2.pack()
 
      anotherBlankLabel = Label(dbWindow, text=' ')
@@ -86,12 +86,20 @@ def clickdbbtn():
 
 def clicksearchbtn(dbWindow, barcode):
      global searchResults
-     if searchResults is not None:
-          searchResults.config(text='Name: ' + database.searchItem(barcode)[0]['name'] + '  |  Price: ' + database.searchItem(barcode)[0]['price'] + '  |  Stock: ' + database.searchItem(barcode)[0]['stock'])
+     if database.searchItem(barcode) != 0:
+          if searchResults is not None:
+               searchResults.config(text='Name: ' + database.searchItem(barcode)[0]['name'] + '  |  Price: ' + database.searchItem(barcode)[0]['price'] + '  |  Stock: ' + database.searchItem(barcode)[0]['stock'])
+          else:
+               searchResults = Label(dbWindow, text='Name: ' + database.searchItem(barcode)[0]['name'] + '  |  Price: ' + database.searchItem(barcode)[0]['price'] + '  |  Stock: ' + database.searchItem(barcode)[0]['stock'])
+               searchResults.config(font=('TkDefaultFont', 20))
+               searchResults.pack()
      else:
-          searchResults = Label(dbWindow, text='Name: ' + database.searchItem(barcode)[0]['name'] + '  |  Price: ' + database.searchItem(barcode)[0]['price'] + '  |  Stock: ' + database.searchItem(barcode)[0]['stock'])
-          searchResults.config(font=('TkDefaultFont', 20))
-          searchResults.pack()
+          if searchResults is not None:
+               searchResults.config(text="There is no item with that barcode.")
+          else:
+               searchResults = Label(dbWindow, text="There is no item with that barcode.")
+               searchResults.config(font=('TkDefaultFont', 20))
+               searchResults.pack()
 
 def clickinsertbtn(dbWindow, barcode):
      dbWindow2 = Toplevel(root)
@@ -127,26 +135,48 @@ def clickinsertbtn(dbWindow, barcode):
      submitbtn.place(x=165, y=180)
 
 def clicksubmitbtn(dbWindow, dbWindow2, barcode, name, price, stock):
-     database.insertItem(barcode, name, price, stock)
      dbWindow2.destroy()
-
      global searchResults
-     if searchResults is not None:
-          searchResults.config(text="Item has been added successfully.")
+
+     if database.searchItem(barcode) != 0:
+          if searchResults is not None:
+               searchResults.config(text="There already is an item with that barcode.")
+          else:
+               searchResults = Label(dbWindow, text="There already is an item with that barcode.")
+               searchResults.config(font=('TkDefaultFont', 20))
+               searchResults.pack()
+     
      else:
-          searchResults = Label(dbWindow, text="Item has been added successfully.")
-          searchResults.config(font=('TkDefaultFont', 20))
-          searchResults.pack()
+          database.insertItem(barcode, name, price, stock)
+          if searchResults is not None:
+               searchResults.config(text="Item has been added successfully.")
+          else:
+               searchResults = Label(dbWindow, text="Item has been added successfully.")
+               searchResults.config(font=('TkDefaultFont', 20))
+               searchResults.pack()
+
+
 
 def clickrmvbtn(dbWindow, barcode):
-     database.removeItem(barcode)
      global searchResults
-     if searchResults is not None:
-          searchResults.config(text="Item removed successfully.")
+     if database.searchItem(barcode) == 0:
+          if searchResults is not None:
+               searchResults.config(text="Requested barcode does not exist.")
+          else:
+               searchResults = Label(dbWindow, text="Requested barcode does not exist.")
+               searchResults.config(font=('TkDefaultFont', 20))
+               searchResults.pack()
+     
      else:
-          searchResults = Label(dbWindow, text="Item removed successfully.")
-          searchResults.config(font=('TkDefaultFont', 20))
-          searchResults.pack()
+
+          database.removeItem(barcode)
+     
+          if searchResults is not None:
+               searchResults.config(text="Item removed successfully.")
+          else:
+               searchResults = Label(dbWindow, text="Item removed successfully.")
+               searchResults.config(font=('TkDefaultFont', 20))
+               searchResults.pack()
 
 def clickupdatepricebtn(dbWindow, barcode):
      dbWindow3 = Toplevel(root)
@@ -170,16 +200,25 @@ def clickupdatepricebtn(dbWindow, barcode):
      submitbtn.place(x=160, y=160)
 
 def clicksubmitbtn2(dbWindow, dbWindow3, barcode, price):
-     database.updatePrice(barcode, price)
+     global searchResults
      dbWindow3.destroy()
 
-     global searchResults
-     if searchResults is not None:
-          searchResults.config(text="Price has been updated successfully.")
+     if database.searchItem(barcode) == 0:
+          if searchResults is not None:
+               searchResults.config(text="Requested barcode does not exist.")
+          else:
+               searchResults = Label(dbWindow, text="Requested barcode does not exist.")
+               searchResults.config(font=('TkDefaultFont', 20))
+               searchResults.pack()
      else:
-          searchResults = Label(dbWindow, text="Price has been updated successfully.")
-          searchResults.config(font=('TkDefaultFont', 20))
-          searchResults.pack()
+          database.updatePrice(barcode, price)
+
+          if searchResults is not None:
+               searchResults.config(text="Price has been updated successfully.")
+          else:
+               searchResults = Label(dbWindow, text="Price has been updated successfully.")
+               searchResults.config(font=('TkDefaultFont', 20))
+               searchResults.pack()
 
 def clickupdatestockbtn(dbWindow, barcode):
      dbWindow4 = Toplevel(root)
@@ -203,16 +242,25 @@ def clickupdatestockbtn(dbWindow, barcode):
      submitbtn.place(x=160, y=160)
 
 def clicksubmitbtn3(dbWindow, dbWindow4, barcode, stock):
-     database.updateStock(barcode, stock)
+     global searchResults
      dbWindow4.destroy()
 
-     global searchResults
-     if searchResults is not None:
-          searchResults.config(text="Stock has been updated successfully.")
+     if database.searchItem(barcode) == 0:
+          if searchResults is not None:
+               searchResults.config(text="Requested barcode does not exist.")
+          else:
+               searchResults = Label(dbWindow, text="Requested barcode does not exist.")
+               searchResults.config(font=('TkDefaultFont', 20))
+               searchResults.pack()
+
      else:
-          searchResults = Label(dbWindow, text="Stock has been updated successfully.")
-          searchResults.config(font=('TkDefaultFont', 20))
-          searchResults.pack()
+
+          if searchResults is not None:
+               searchResults.config(text="Stock has been updated successfully.")
+          else:
+               searchResults = Label(dbWindow, text="Stock has been updated successfully.")
+               searchResults.config(font=('TkDefaultFont', 20))
+               searchResults.pack()
 
 def edit():
      
