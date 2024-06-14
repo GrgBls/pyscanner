@@ -3,7 +3,6 @@ import database
 item_price_list =[]
 item_name_list = []
 item_price_total=0.0
-key=0
 depth = 100
 
  
@@ -25,7 +24,7 @@ searchResults = None
 
 def getManualBarcode():
      global depth
-     global key
+    
      global item_price_total
      ManualBarcode = enterBarcode.get()
      Barcode = ManualBarcode
@@ -35,8 +34,7 @@ def getManualBarcode():
      item_name = database.getItemName(Barcode)
      item_price = database.getItemPrice(Barcode)
      if item_name != 0:
-          item_price_list.append(item_price)
-          item_name_list.append(item_name)
+
           database.itemSold(Barcode)
           
 
@@ -44,7 +42,7 @@ def getManualBarcode():
           price=database.searchItem(Barcode)[0]['price']
           
 
-          
+          item_price_total=item_price_total+float(price)
           print(item_price_total)
 
           receipt_name=Label(text = name)
@@ -55,7 +53,7 @@ def getManualBarcode():
           receipt_price.config(font=('TkDefaultFont',18))
           receipt_price.place(x=920,y=depth)
 
-          key = key +1 
+          
           depth = depth+40
 
 
@@ -318,7 +316,15 @@ def edit():
 editbtn = Button(text="Edit", width=8, height=3, fg="black", bg="gray85",
                  command= edit)
 editbtn.place(x=115, y=480)
-endbtn = Button(text="End", width=8, height=3, fg="black", bg="gray85")
+def clickendbtn(total,depth): #NEED TO ADD DECIMAL ROUNDING
+     totalprice=Label(text="TOTAL:"+str(total))
+     totalprice.config(font=('TkDefaultFont',18))
+     totalprice.place(x=785,y=depth+10)
+
+
+endbtn = Button(text="End", width=8, height=3, fg="black", bg="gray85",
+                command=lambda: clickendbtn(item_price_total,depth))
+
 endbtn.place(x=215, y=480)
 databasebtn = Button(text="Database", width=8, height=3, fg="black", bg="gray85", command=clickdbbtn)
 databasebtn.place(x=315, y=480)
