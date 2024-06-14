@@ -65,20 +65,23 @@ def clickdbbtn():
      #enterBarcode2.place(x=350, y=290)
      enterBarcode2.pack()
 
+     anotherBlankLabel = Label(dbWindow, text=' ')
+     anotherBlankLabel.pack()
+
 
      searchbtn = Button(dbWindow, text="Search", width=15, height = 3, fg="black", bg="gray85", command= lambda: clicksearchbtn(dbWindow, enterBarcode2.get()))
      searchbtn.place(x=15, y=490)
 
-     insertbtn = Button(dbWindow, text="Insert", width=15, height = 3, fg="black", bg="gray85", command = lambda: clickinsertbtn(enterBarcode2.get()))
+     insertbtn = Button(dbWindow, text="Insert", width=15, height = 3, fg="black", bg="gray85", command = lambda: clickinsertbtn(dbWindow, enterBarcode2.get()))
      insertbtn.place(x=145, y=490)
      
      removebtn = Button(dbWindow, text="Remove", width=15, height = 3, fg="black", bg="gray85", command = lambda: clickrmvbtn(dbWindow, enterBarcode2.get()))
      removebtn.place(x=275, y=490)
 
-     updatePricebtn = Button(dbWindow, text="Update Price", width=15, height = 3, fg="black", bg="gray85", command = lambda: clickupdatepricebtn(enterBarcode2.get()))
+     updatePricebtn = Button(dbWindow, text="Update Price", width=15, height = 3, fg="black", bg="gray85", command = lambda: clickupdatepricebtn(dbWindow, enterBarcode2.get()))
      updatePricebtn.place(x=405, y=490)
      
-     updateStockbtn = Button(dbWindow, text="Update Stock", width=15, height = 3, fg="black", bg="gray85", command = lambda: clickupdatestockbtn(enterBarcode2.get()))
+     updateStockbtn = Button(dbWindow, text="Update Stock", width=15, height = 3, fg="black", bg="gray85", command = lambda: clickupdatestockbtn(dbWindow, enterBarcode2.get()))
      updateStockbtn.place(x=535, y=490)
 
 def clicksearchbtn(dbWindow, barcode):
@@ -90,7 +93,7 @@ def clicksearchbtn(dbWindow, barcode):
           searchResults.config(font=('TkDefaultFont', 20))
           searchResults.pack()
 
-def clickinsertbtn(barcode):
+def clickinsertbtn(dbWindow, barcode):
      dbWindow2 = Toplevel(root)
      dbWindow2.title("Insert item")
      dbWindow2.geometry("500x231")
@@ -120,12 +123,20 @@ def clickinsertbtn(barcode):
      enterStock = Entry(dbWindow2, fg="black", bg="gray85", width=40)
      enterStock.place(x=120, y=140)
 
-     submitbtn = Button(dbWindow2, text="Submit", bg="gray85", fg="black", width=20, command=lambda: clicksubmitbtn(dbWindow2, barcode, enterName.get(), enterPrice.get(), enterStock.get()))
+     submitbtn = Button(dbWindow2, text="Submit", bg="gray85", fg="black", width=20, command=lambda: clicksubmitbtn(dbWindow, dbWindow2, barcode, enterName.get(), enterPrice.get(), enterStock.get()))
      submitbtn.place(x=165, y=180)
 
-def clicksubmitbtn(dbWindow2, barcode, name, price, stock):
+def clicksubmitbtn(dbWindow, dbWindow2, barcode, name, price, stock):
      database.insertItem(barcode, name, price, stock)
      dbWindow2.destroy()
+
+     global searchResults
+     if searchResults is not None:
+          searchResults.config(text="Item has been added successfully.")
+     else:
+          searchResults = Label(dbWindow, text="Item has been added successfully.")
+          searchResults.config(font=('TkDefaultFont', 20))
+          searchResults.pack()
 
 def clickrmvbtn(dbWindow, barcode):
      database.removeItem(barcode)
@@ -137,7 +148,7 @@ def clickrmvbtn(dbWindow, barcode):
           searchResults.config(font=('TkDefaultFont', 20))
           searchResults.pack()
 
-def clickupdatepricebtn(barcode):
+def clickupdatepricebtn(dbWindow, barcode):
      dbWindow3 = Toplevel(root)
      dbWindow3.title("Update price")
      dbWindow3.geometry("400x200")
@@ -155,14 +166,22 @@ def clickupdatepricebtn(barcode):
      enterPrice = Entry(dbWindow3, fg="black", bg="gray85", width=40)
      enterPrice.place(x=90, y=90)
 
-     submitbtn = Button(dbWindow3, text="Submit", bg="gray85", fg="black", width=10, command=lambda: clicksubmitbtn2(dbWindow3, barcode, enterPrice.get()))
+     submitbtn = Button(dbWindow3, text="Submit", bg="gray85", fg="black", width=10, command=lambda: clicksubmitbtn2(dbWindow, dbWindow3, barcode, enterPrice.get()))
      submitbtn.place(x=160, y=160)
 
-def clicksubmitbtn2(dbWindow3, barcode, price):
+def clicksubmitbtn2(dbWindow, dbWindow3, barcode, price):
      database.updatePrice(barcode, price)
      dbWindow3.destroy()
 
-def clickupdatestockbtn(barcode):
+     global searchResults
+     if searchResults is not None:
+          searchResults.config(text="Price has been updated successfully.")
+     else:
+          searchResults = Label(dbWindow, text="Price has been updated successfully.")
+          searchResults.config(font=('TkDefaultFont', 20))
+          searchResults.pack()
+
+def clickupdatestockbtn(dbWindow, barcode):
      dbWindow4 = Toplevel(root)
      dbWindow4.title("Add more stock")
      dbWindow4.geometry("400x200")
@@ -180,12 +199,20 @@ def clickupdatestockbtn(barcode):
      enterStock = Entry(dbWindow4, fg="black", bg="gray85", width=40)
      enterStock.place(x=130, y=90)
 
-     submitbtn = Button(dbWindow4, text="Submit", bg="gray85", fg="black", width=10, command=lambda: clicksubmitbtn3(dbWindow4, barcode, enterStock.get()))
+     submitbtn = Button(dbWindow4, text="Submit", bg="gray85", fg="black", width=10, command=lambda: clicksubmitbtn3(dbWindow, dbWindow4, barcode, enterStock.get()))
      submitbtn.place(x=160, y=160)
 
-def clicksubmitbtn3(dbWindow4, barcode, stock):
+def clicksubmitbtn3(dbWindow, dbWindow4, barcode, stock):
      database.updateStock(barcode, stock)
      dbWindow4.destroy()
+
+     global searchResults
+     if searchResults is not None:
+          searchResults.config(text="Stock has been updated successfully.")
+     else:
+          searchResults = Label(dbWindow, text="Stock has been updated successfully.")
+          searchResults.config(font=('TkDefaultFont', 20))
+          searchResults.pack()
 
 def edit():
      
@@ -225,6 +252,4 @@ databasebtn = Button(text="Database", width=8, height=3, fg="black", bg="gray85"
 databasebtn.place(x=315, y=480)
 
 
-
 root.mainloop()
-
