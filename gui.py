@@ -3,7 +3,14 @@ import database
 item_price_list =[]
 item_name_list = []
 item_price_total=0.0
+roundedTotal = None
 depth = 100
+receipt_name = None
+receipt_price=None
+labelNameList=[]
+labelPriceList=[]
+desired_amount=0
+itemtoedit=0
 
  
 root = Tk()
@@ -24,8 +31,12 @@ searchResults = None
 
 def getManualBarcode():
      global depth
-    
+     global roundedTotal
      global item_price_total
+     global receipt_name 
+     global receipt_price
+     global labelNameList
+     global labelPriceList
      ManualBarcode = enterBarcode.get()
      Barcode = ManualBarcode
 
@@ -33,8 +44,7 @@ def getManualBarcode():
      
      item_name = database.getItemName(Barcode)
      item_price = database.getItemPrice(Barcode)
-     item_stock = database.searchItem(Barcode)[0]['stock']
-     if item_name != 0 and int(item_stock) > 0:
+     if item_name != 0:
 
           database.itemSold(Barcode)
           
@@ -44,15 +54,19 @@ def getManualBarcode():
           
 
           item_price_total=item_price_total+float(price)
-          print(item_price_total)
+          roundedTotal= str(round(item_price_total,2))
+          print(roundedTotal)
 
-          receipt_name=Label(text = name)
+
+          receipt_name= Label(text = name)
           receipt_name.config(font=('TkDefaultFont',18))
           receipt_name.place(x=650,y=depth)
+          labelNameList.append(receipt_name)
 
           receipt_price=Label(text = price)
           receipt_price.config(font=('TkDefaultFont',18))
           receipt_price.place(x=920,y=depth)
+          labelPriceList.append(receipt_price)
 
           
           depth = depth+40
@@ -277,54 +291,86 @@ def clicksubmitbtn3(dbWindow, dbWindow4, barcode, stock):
                searchResults.pack()
 
      else:
-          database.updateStock(barcode, stock)
+
           if searchResults is not None:
                searchResults.config(text="Stock has been updated successfully.")
           else:
                searchResults = Label(dbWindow, text="Stock has been updated successfully.")
                searchResults.config(font=('TkDefaultFont', 20))
                searchResults.pack()
+def clickconfirmbtn(item,amount,namelist,pricelist,namelabel,pricelabel):
+     '''key=int(item)
+     labeltodeditname=namelist[key]
+     labeltodeditprice=pricelist[key]
+     if item < len(namelist):
+          if amount =="0":
+               labeltodeditname.destroy()
+               labeltodeditprice.destroy()
+               namelist.pop(key)
+               pricelist.pop(key)
+
+          print(namelist,pricelist)
+
+          labeltodeditname.destroy()
+          labeltodeditprice.destroy()      
+          print(namelist,pricelist)  '''
+     print(item,amount)          
 
 def edit():
      
-     editBox = Toplevel(root)
+     editwindow = Toplevel(root)
 
-     editBox.title("edit")
-     editBox.geometry("500x281")
+     editwindow.title("edit")
+     editwindow.geometry("500x281")
  
-     Editgreeting = Label(editBox, text="which item would you like to edit")
+     Editgreeting = Label(editwindow, text="which item would you like to edit")
      Editgreeting.config(font=('TkDefaultFont', 20))
      Editgreeting.pack()
-     enteritemtoedit = Entry(editBox, fg="black", bg="gray85", width=40)
-     enteritemtoedit.place(x=120, y=50, height=15)
+     enteritemtoedit = Entry(editwindow, fg="black", bg="gray85", width=40)
+     enteritemtoedit.place(x=120, y=50, height=40)
+     
+     
      
 
 
     
-     AmountText = Label(editBox, text="enter the desired amount")
+     AmountText = Label(editwindow, text="enter the desired amount")
      AmountText.config(font=('TkDefaultFont', 20))
      AmountText.place(x=120,y=80)
-     Amount = Entry(editBox, fg="black", bg="gray85", width=40)
-     Amount.place(x=120, y=135, height=15)
+     Amount = Entry(editwindow, fg="black", bg="gray85", width=40)
+     Amount.place(x=120, y=135, height=32)
+     global desired_amount
      desired_amount=Amount.get()
+     global itemtoedit
      itemtoedit = enteritemtoedit.get()
-     itemtoedit_name = item_name_list[itemtoedit-1]
-     itemtoedit_price = item_price_list[itemtoedit-1]
-     if desired_amount == 0:
-          item_price_list.pop(int(itemtoedit)-1)
-          item_name_list.pop(int(itemtoedit)-1)
+     global item_name_list
+     global item_price_list
+     confirmbtn = Button(editwindow,text="confirm",command=lambda: clickconfirmbtn(itemtoedit,desired_amount,labelNameList,labelPriceList,receipt_name,receipt_price))
+     confirmbtn.place(x=220,y=180)
+
+
+ 
+          
+
+     
 
 editbtn = Button(text="Edit", width=8, height=3, fg="black", bg="gray85",
                  command= edit)
 editbtn.place(x=115, y=480)
-def clickendbtn(total,depth): #NEED TO ADD DECIMAL ROUNDING
+def clickendbtn(total,label1,label2,list1,list2): 
+     for label1 in list1:
+          label1.destroy()
+     for label2 in list2:
+          label2.destroy()
+
+     
      totalprice=Label(text="TOTAL:"+str(total))
      totalprice.config(font=('TkDefaultFont',18))
-     totalprice.place(x=785,y=depth+10)
+     totalprice.place(x=785,y=10)
 
 
 endbtn = Button(text="End", width=8, height=3, fg="black", bg="gray85",
-                command=lambda: clickendbtn(item_price_total,depth))
+                command=lambda: clickendbtn(roundedTotal,receipt_name,receipt_price,labelNameList,labelPriceList))
 
 endbtn.place(x=215, y=480)
 databasebtn = Button(text="Database", width=8, height=3, fg="black", bg="gray85", command=clickdbbtn)
