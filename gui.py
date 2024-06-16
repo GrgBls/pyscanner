@@ -1,9 +1,11 @@
 from tkinter import *
 import database
+import Receipt
 import time
 import cv2
-flag = 0;
+flag = 0
 from pyzbar.pyzbar import decode
+from contextlib import redirect_stdout
 cap=cv2.VideoCapture(0)
 bd = cv2.barcode.BarcodeDetector()
 item_price_list =[]
@@ -48,7 +50,7 @@ enterBarcode.place(x=15, y=120, height=25)
 searchResults = None
 
 def clickscanbtn():
-    global scanedbarcode
+    
     global flag
 
     flag = 0  
@@ -89,21 +91,22 @@ def getManualBarcode():
      print(database.getItemName(ManualBarcode))
      
      item_name = database.getItemName(Barcode)
-     item_price = database.getItemPrice(Barcode)
-     if item_name != 0:
+     name=database.searchItem(Barcode)[0]['name']
+     price=database.searchItem(Barcode)[0]['price']
+     
+     if name != 0:
 
           database.itemSold(Barcode)
           
 
-          name=database.searchItem(Barcode)[0]['name']
-          price=database.searchItem(Barcode)[0]['price']
+
           
 
           item_price_total=item_price_total+float(price)
           roundedTotal= str(round(item_price_total,2))
           print(roundedTotal)
 
-
+          Receipt.add_items(str(name),str(price))
           receipt_name= Label(text = name)
           receipt_name.config(font=('TkDefaultFont',18))
           receipt_name.place(x=620,y=depth)
@@ -501,6 +504,10 @@ def clickendbtn(total,label1,label2,list1,list2):
      totalprice.config(font=('TkDefaultFont',18))
      totalprice.place(x=785,y=50)
      depth=100
+     output_file = 'receipt.txt'
+     with open(output_file, 'w+') as f:
+        with redirect_stdout(f):
+            Receipt.receipt()
     
 
 
