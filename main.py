@@ -344,6 +344,7 @@ def clicksubmitbtn3(dbWindow, dbWindow4, barcode, stock):
                searchResults.pack()
 
      else:
+          database.updateStock(barcode, stock)
 
           if searchResults is not None:
                searchResults.config(text="Stock has been updated successfully.")
