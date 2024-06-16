@@ -9,20 +9,20 @@ A python program to scan items in a market.
 ## Installation
 The program requires opencv, tkinter, pyzbar and numpy 1.x to work. First, you need to install those libraries:
 ```bash
-pip install opencv-python
-pip install tk
-pip install pyzbar
-pip install numpy==1.26.4
+pip install opencv-python tk pyzbar numpy==1.26.4
 ```
+! The program requires numpy's version to be 1.x and doesn't work with version 2.0 or higher.
 
-Next, you can clone and run pyscanner just by cloning the repository:
+Next, you can clone pyscanner:
 ```
 git clone github.com/GrgBls/pyscanner.git
-cd pyscanner
-./main.py
+```
+Finally, you are able to run the program:
+```
+cd pyscanner && ./main.py
 ```
 ## How to use // Database
-    
+ 
 By clicking the Database button, you will be able to search, insert and remove items, as well as update their prices and how much stock there is left. 
 
 To perform any action, first input the product's barcode and then click on the specific action. The program will guide you for the next steps.
