@@ -17,6 +17,7 @@ labelPriceList=[]
 enteritemtoedit=None
 Amount=None
 
+
  
 root = Tk()
 
@@ -35,6 +36,9 @@ enterBarcode.place(x=15, y=120, height=25)
 searchResults = None
 
 def clickscanbtn():
+     global scanedbarcode
+
+
 
      while True:
           success, img =cap.read()
@@ -44,6 +48,9 @@ def clickscanbtn():
           for code in decode(img):
                enterBarcode.insert(0,code.data.decode('utf-8'))
                print(code.data.decode("utf-8"))
+
+                    
+                    
 
           cv2.imshow("image",img)
           if cv2.waitKey(1) & 0xFF == ord('q'):
