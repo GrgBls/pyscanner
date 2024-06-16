@@ -2,7 +2,8 @@ from tkinter import *
 import database
 import time
 import cv2
-from pyzbar .pyzbar import decode
+flag = 0;
+from pyzbar.pyzbar import decode
 cap=cv2.VideoCapture(0)
 bd = cv2.barcode.BarcodeDetector()
 item_price_list =[]
@@ -47,26 +48,30 @@ enterBarcode.place(x=15, y=120, height=25)
 searchResults = None
 
 def clickscanbtn():
-     global scanedbarcode
+    global scanedbarcode
+    global flag
 
+    flag = 0  
 
+    while True:
+        success, img = cap.read()
 
-     while True:
-          success, img =cap.read()
+        if not success:
+            break
 
-          if not success:
-               break
-          for code in decode(img):
-               enterBarcode.insert(0,code.data.decode('utf-8'))
-               print(code.data.decode("utf-8"))
+        for code in decode(img):
+            barcode_data = code.data.decode('utf-8')
+            enterBarcode.delete(0, END) 
+            enterBarcode.insert(0, barcode_data)
+            print(barcode_data)
+            flag = 1  
+            break  
 
-                    
-                    
+        cv2.imshow("image", img)
+        if cv2.waitKey(1) & 0xFF == ord('q') or flag == 1:
+            cv2.destroyAllWindows()
+            break
 
-          cv2.imshow("image",img)
-          if cv2.waitKey(1) & 0xFF == ord('q'):
-               cv2.destroyAllWindows()
-               break
           
 def getManualBarcode():
      global depth
