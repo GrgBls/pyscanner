@@ -14,8 +14,19 @@ receipt_name = None
 receipt_price=None
 labelNameList=[]
 labelPriceList=[]
+names=[]
+prices=[]
 enteritemtoedit=None
-Amount=None
+editflag=None
+counter =0
+item = 0
+itemprice=0.0
+newname=None
+new_price=None
+Label1=None
+Label2=None
+
+
 
 
  
@@ -65,9 +76,11 @@ def getManualBarcode():
      global receipt_price
      global labelNameList
      global labelPriceList
+     global counter
      ManualBarcode = enterBarcode.get()
      Barcode = ManualBarcode
-
+     global names
+     global prices 
      print(database.getItemName(ManualBarcode))
      
      item_name = database.getItemName(Barcode)
@@ -90,6 +103,8 @@ def getManualBarcode():
           receipt_name.config(font=('TkDefaultFont',18))
           receipt_name.place(x=620,y=depth)
           labelNameList.append(receipt_name)
+          names.append(item_name)
+          prices.append(price)
 
           receipt_price=Label(text = price)
           receipt_price.config(font=('TkDefaultFont',18))
@@ -99,6 +114,7 @@ def getManualBarcode():
 
           
           depth = depth+40
+          counter=counter+1
 
 
           
@@ -330,6 +346,7 @@ def clicksubmitbtn3(dbWindow, dbWindow4, barcode, stock):
 
 
 def edit():
+     global Amount
      
      editwindow = Toplevel(root)
 
@@ -356,11 +373,11 @@ def edit():
      Amount = Entry(editwindow, fg="black", bg="gray85", width=40)
      Amount.place(x=120, y=135, height=32)
      
-     desired_amount=Amount.get()
-     
-     itemtoedit = enteritemtoedit.get()
+
      global item_name_list
      global item_price_list
+     
+     
      confirmbtn = Button(editwindow,text="confirm",command=lambda: clickconfirmbtn(labelNameList,labelPriceList,receipt_name,receipt_price))
      confirmbtn.place(x=220,y=180)
 
@@ -374,67 +391,124 @@ editbtn = Button(text="Edit", width=8, height=3, fg="black", bg="gray85",
                  command= edit)
 editbtn.place(x=115, y=480)
 
-def clickconfirmbtn(namelist,pricelist,list1,list2):
+def clickconfirmbtn(namelist,pricelist,receiptname,receiptprice):
+     global item
+     global editflag
+     
+     global itemprice
+     global newname,new_price,Label1,Label2
+     
      tmp1=enteritemtoedit.get()
      item=int(tmp1)-1
      tmp2=Amount.get()
      amount=int(tmp2)
-     namelist=list1
-     pricelist=list2
+     i=100
+
      
-     labeltodeditname=namelist[item]
-     tmp=pricelist[item]
-     labeltodeditprice=float(tmp)
      
-     if item < len(list1)+1:
-          if amount ==0:
-               for namelabel in namelist:
-                    namelabel.destroy()
-               for pricelabel in pricelist:
-                    pricelabel.destroy()
-               depth=100
+
+     itemprice=float(prices[item])
+     print (names)
+     print("first call")
+
+     
+     
+     if amount ==0:
+          editflag=1
+          itemprice=-float(itemprice)
+          for receiptname in namelist:
+               receiptname.destroy()
+          for receiptprice in pricelist:
+               receiptprice.destroy()
+          namelist=[]
+          pricelist=[]
+          
                
                
-               namelist.pop(item)
-               pricelist.pop(item)
-               for namelabel in namelist:
-                    namelabel.place(root,x=650,y=depth)
-                    depth=depth+40
-               depth = 100
-               for pricelabel in pricelist:
-                    pricelabel.place(root,x=920,y=depth)
-                    depth=depth+40
-                    
+          names.pop(item)
+          prices.pop(item)
+          print(names)
+ 
+          for name in names:
+               newname=Label(root,text=name)
+               newname.config(font=('TkDefaultFont',18))
+               newname.place(x=620,y=i)
+               namelist.append(newname)
+               i=i+40    
+          i=100
+          for price in prices:
+               new_price=Label(root,text=price)
+               new_price.config(font=('TkDefaultFont',18))
+               new_price.place(x=900,y=i)
+               pricelist.append(new_price)
+               i = i+40
+     elif amount != 0:
+          editflag=2
+          itemprice=float(itemprice)*amount
+          namelist[item].destroy()
+          pricelist[item].destroy()
+          editname=str(amount)+"x "+names[item]
+          editprice=round(amount*float(prices[item]),2)
+          Label1=Label(root,text=editname)
+          Label1.config(font=('TkDefaultFont',18))
+          Label1.place(x=620,y=100+40*item)
+          namelist[item]=Label1
+          Label2=Label(root,text=editprice)
+          Label2.config(font=('TkDefaultFont',18))
+          Label2.place(x=900,y=100+40*item)
+          pricelist[item]=Label2
+          
+          
+          
 
-     if Amount != 0:
-          newprice=amount*labeltodeditprice
-          namelist[item]=(amount+"x"+namelist[item])
-
-              
-               #while item < len[namelist]
-
+     
 
 
        
 def clickendbtn(total,label1,label2,list1,list2): 
+
+
+
+     if editflag !=None:
+
+
+          total=round(float(total)+itemprice,2)
+          if editflag == 1:
+               for name in list1:
+                    name.destroy()
+               for price in list2:
+                    price.destroy()
+
+
+               newname.destroy()
+               new_price.destroy()
+          elif editflag==2:
+
+
+               Label1.destroy()
+               Label2.destroy()
      for label1 in list1:
           label1.destroy()
      for label2 in list2:
           label2.destroy()
 
-     
      totalprice=Label(text="TOTAL:"+str(total))
      totalprice.config(font=('TkDefaultFont',18))
      totalprice.place(x=785,y=50)
      depth=100
-     print(depth)
-     test=Label(text="TOTAL:"+str(total))
-     test.config(font=('TkDefaultFont',18))
-     test.place(x=800,y=depth)
+    
+
+
+
      
 
-     #totalprice.destroy()
-     #depth=100
+     print(depth)
+
+     
+
+
+
+
 
 
 endbtn = Button(text="End", width=8, height=3, fg="black", bg="gray85",
